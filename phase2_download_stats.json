@@ -1,0 +1,30 @@
+{
+    "total_requested": 16595,
+    "successful_images": 16595,
+    "failed_images": 0,
+    "status_breakdown": {
+        "SUCCESS": 16595
+    },
+    "final_genre_distribution": {
+        "Rock": 3838,
+        "Electronic": 2526,
+        "Pop": 1815,
+        "Jazz": 1331,
+        "Rap": 1222,
+        "Metal": 1138,
+        "RnB": 952,
+        "Reggae": 828,
+        "Country": 799,
+        "Folk": 536,
+        "Blues": 420,
+        "Punk": 388,
+        "Latin": 372,
+        "World": 279,
+        "New Age": 151
+    },
+    "final_split_counts": {
+        "train": 11493,
+        "val": 2556,
+        "test": 2546
+    }
+}

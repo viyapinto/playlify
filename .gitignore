@@ -4,3 +4,4 @@ data/
 *.tsv
 *.npy
 __pycache__/
+download_error_log.txt
