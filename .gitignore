@@ -1,0 +1,6 @@
+1240485/
+data/
+*.tar.gz
+*.tsv
+*.npy
+__pycache__/
