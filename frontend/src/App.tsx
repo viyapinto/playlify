@@ -4,11 +4,11 @@ import './index.css';
 
 const PROCESSING_STEPS = [
   "IMAGE RECEIVED",
-  "EXTRACTING FEATURES",
-  "SCALING FEATURES",
-  "FINDING NEAREST NEIGHBOURS",
-  "CLASSIFYING GENRE",
-  "RESULT READY"
+  "EXTRACTING VISUAL FEATURES",
+  "COMPRESSING FEATURES",
+  "FINDING NEAREST ALBUMS",
+  "PREDICTING",
+  "RESULT"
 ];
 
 function App() {
@@ -17,6 +17,8 @@ function App() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingStep, setProcessingStep] = useState(-1);
   const [predictionResult, setPredictionResult] = useState<any>(null);
+  const [kValue, setKValue] = useState(10);
+  const [showResearch, setShowResearch] = useState(false);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -41,6 +43,7 @@ function App() {
     try {
       const formData = new FormData();
       formData.append('image', selectedFile);
+      formData.append('k', kValue.toString());
 
       const response = await fetch('http://localhost:8000/predict', {
         method: 'POST',
@@ -80,8 +83,12 @@ function App() {
             <Music size={24} />
             Playlify
           </a>
-          <button className="btn btn-secondary" style={{ padding: '8px 16px', fontSize: '0.875rem' }}>
-            About the Research
+          <button 
+            className="btn btn-secondary" 
+            style={{ padding: '8px 16px', fontSize: '0.875rem' }}
+            onClick={() => setShowResearch(!showResearch)}
+          >
+            {showResearch ? 'Hide Research' : 'About the Research'}
           </button>
         </nav>
       </header>
@@ -99,7 +106,7 @@ function App() {
 
         {/* Upload Area */}
         <section className="flex-center" style={{ marginBottom: 'var(--spacing-xl)' }}>
-          <div className="upload-zone" style={{ width: '100%', maxWidth: '600px' }}>
+          <div className="upload-zone" style={{ width: '100%', maxWidth: '600px', position: 'relative' }}>
             <input type="file" accept="image/*" onChange={handleFileUpload} />
             <Upload size={48} color="var(--color-teal-waters)" />
             <div style={{ textAlign: 'center' }}>
@@ -111,6 +118,8 @@ function App() {
             <div className="btn btn-primary" style={{ marginTop: 'var(--spacing-sm)' }}>
               Select Image <ChevronRight size={18} />
             </div>
+            
+
           </div>
         </section>
 
@@ -207,7 +216,7 @@ function App() {
                  </div>
                  <div>
                     <h3 className="text-h3">Visual Analysis Complete</h3>
-                    <p className="text-body" style={{ opacity: 0.8 }}>Extracted feature vectors were passed through our MLP neural network and PCA dimensionality reduction.</p>
+                    <p className="text-body" style={{ opacity: 0.8 }}>Playlify found visually closest albums to help predict the genre.</p>
                  </div>
               </div>
             </div>
@@ -219,7 +228,7 @@ function App() {
                   <h3 className="text-h2" style={{ marginBottom: 0, display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <Library size={28} /> Visual Nearest Neighbors
                   </h3>
-                  <span className="text-body" style={{ color: 'var(--color-teal-waters)', opacity: 0.7 }}>k={predictionResult.similar_albums.length} albums</span>
+                  <span className="text-body" style={{ color: 'var(--color-teal-waters)', opacity: 0.7 }}>Most of the nearest neighbours belong to {predictionResult.prediction.genre.toUpperCase()}</span>
                 </div>
                 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 'var(--spacing-lg)' }}>
@@ -240,6 +249,114 @@ function App() {
               </section>
             )}
           </div>
+        )}
+
+        {/* Visual Story / Research Section */}
+        {showResearch && (
+          <section className="section flex-col animate-fade-in" style={{ paddingTop: 'var(--spacing-xl)', borderTop: '1px solid rgba(32, 70, 84, 0.1)', marginTop: 'var(--spacing-lg)' }}>
+            <div style={{ textAlign: 'center', maxWidth: '600px', margin: '0 auto var(--spacing-xl)' }}>
+              <h2 className="text-display" style={{ marginBottom: 'var(--spacing-sm)' }}>How Playlify Works</h2>
+              <p className="text-body-large" style={{ opacity: 0.8 }}>Can an album cover tell us something about its genre? Here is how our model sees it.</p>
+            </div>
+
+            <div className="flex-col gap-lg" style={{ maxWidth: '600px', margin: '0 auto', width: '100%' }}>
+              {/* MobileNetV2 */}
+              <div className="card flex-col flex-center" style={{ padding: 'var(--spacing-xl)', textAlign: 'center' }}>
+                <h3 className="text-h2" style={{ color: 'var(--color-teal-waters)', marginBottom: 'var(--spacing-xs)' }}>1. MobileNetV2</h3>
+                <p className="text-body-large" style={{ marginBottom: 'var(--spacing-xl)' }}>Turns the album cover into a rich visual representation.</p>
+                <div className="flex-center flex-col gap-sm" style={{ opacity: 0.9, width: '100%' }}>
+                  <div style={{ width: '240px', padding: '12px 16px', backgroundColor: 'var(--color-glacial-sky)', borderRadius: 'var(--radius-sm)' }}>ALBUM COVER</div>
+                  <div style={{ fontSize: '1.2rem', color: 'var(--color-teal-waters)', opacity: 0.5 }}>↓</div>
+                  <div style={{ width: '240px', padding: '12px 16px', backgroundColor: 'var(--color-glacial-sky)', borderRadius: 'var(--radius-sm)' }}>MobileNetV2</div>
+                  <div style={{ fontSize: '1.2rem', color: 'var(--color-teal-waters)', opacity: 0.5 }}>↓</div>
+                  <div style={{ width: '240px', padding: '12px 16px', backgroundColor: 'var(--color-spring-meadow)', borderRadius: 'var(--radius-sm)', fontWeight: 'bold', color: 'var(--color-teal-waters)' }}>1,280 visual features</div>
+                </div>
+              </div>
+
+              <div style={{ textAlign: 'center', opacity: 0.5, fontSize: '1.5rem', color: 'var(--color-teal-waters)' }}>↓</div>
+
+              {/* PCA */}
+              <div className="card flex-col flex-center" style={{ padding: 'var(--spacing-xl)', textAlign: 'center' }}>
+                <h3 className="text-h2" style={{ color: 'var(--color-teal-waters)', marginBottom: 'var(--spacing-xs)' }}>2. PCA</h3>
+                <p className="text-body-large" style={{ marginBottom: 'var(--spacing-xl)' }}>Compresses the large feature representation into a smaller one to make the search easier and faster.</p>
+                <div className="flex-center flex-col gap-sm" style={{ opacity: 0.9, width: '100%' }}>
+                  <div style={{ width: '240px', padding: '12px 16px', backgroundColor: 'var(--color-glacial-sky)', borderRadius: 'var(--radius-sm)' }}>1,280 dimensions</div>
+                  <div style={{ fontSize: '1.2rem', color: 'var(--color-teal-waters)', opacity: 0.5 }}>↓</div>
+                  <div style={{ width: '240px', padding: '12px 16px', backgroundColor: 'var(--color-glacial-sky)', borderRadius: 'var(--radius-sm)' }}>PCA</div>
+                  <div style={{ fontSize: '1.2rem', color: 'var(--color-teal-waters)', opacity: 0.5 }}>↓</div>
+                  <div style={{ width: '240px', padding: '12px 16px', backgroundColor: 'var(--color-spring-meadow)', borderRadius: 'var(--radius-sm)', fontWeight: 'bold', color: 'var(--color-teal-waters)' }}>128 dimensions</div>
+                </div>
+              </div>
+
+              <div style={{ textAlign: 'center', opacity: 0.5, fontSize: '1.5rem', color: 'var(--color-teal-waters)' }}>↓</div>
+
+              {/* KNN */}
+              <div className="card flex-col flex-center" style={{ padding: 'var(--spacing-xl)', textAlign: 'center' }}>
+                <h3 className="text-h2" style={{ color: 'var(--color-teal-waters)', marginBottom: 'var(--spacing-xs)' }}>3. K-Nearest Neighbors (KNN)</h3>
+                <p className="text-body-large" style={{ marginBottom: 'var(--spacing-xl)' }}>Looks for the albums closest to the uploaded cover.</p>
+                <div className="flex-center flex-col gap-sm" style={{ opacity: 0.9, width: '100%' }}>
+                  <div style={{ width: '240px', padding: '12px 16px', backgroundColor: 'var(--color-glacial-sky)', borderRadius: 'var(--radius-sm)' }}>NEW COVER</div>
+                  <div style={{ fontSize: '1.2rem', color: 'var(--color-teal-waters)', opacity: 0.5 }}>↓</div>
+                  <div style={{ width: '240px', padding: '12px 16px', backgroundColor: 'var(--color-glacial-sky)', borderRadius: 'var(--radius-sm)' }}>COMPARE WITH ALBUMS</div>
+                  <div style={{ fontSize: '1.2rem', color: 'var(--color-teal-waters)', opacity: 0.5 }}>↓</div>
+                  <div style={{ width: '240px', padding: '12px 16px', backgroundColor: 'var(--color-spring-meadow)', borderRadius: 'var(--radius-sm)', fontWeight: 'bold', color: 'var(--color-teal-waters)' }}>FIND CLOSEST NEIGHBOURS</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Baselines and Comparison */}
+            <div style={{ textAlign: 'center', maxWidth: '800px', margin: 'var(--spacing-xl) auto 0' }}>
+              <h2 className="text-display" style={{ marginBottom: 'var(--spacing-md)' }}>How well did the different approaches perform?</h2>
+              
+              <div className="grid-2" style={{ textAlign: 'left', marginTop: 'var(--spacing-xl)', gap: 'var(--spacing-lg)' }}>
+                <div className="panel-secondary flex-col gap-md">
+                  <h4 className="text-h3" style={{ marginBottom: 'var(--spacing-xs)' }}>Research Baselines</h4>
+                  <div>
+                    <strong>MLP</strong>
+                    <p className="text-small" style={{ opacity: 0.8, marginTop: '4px' }}>Tests whether a simpler neural network can classify genres from the extracted features.</p>
+                  </div>
+                  <div>
+                    <strong>Logistic Regression</strong>
+                    <p className="text-small" style={{ opacity: 0.8, marginTop: '4px' }}>Provides a basic linear benchmark for comparison.</p>
+                  </div>
+                </div>
+
+                <div className="panel-dark flex-col gap-md">
+                  <h4 className="text-h3" style={{ color: 'var(--color-spring-meadow)' }}>Performance</h4>
+                  
+                  <div>
+                    <div className="flex-center" style={{ justifyContent: 'space-between', marginBottom: '4px', fontSize: '0.875rem' }}>
+                      <span>MobileNetV2 (Finetuned)</span>
+                      <span>33.2%</span>
+                    </div>
+                    <div className="bar-chart-container bar-chart-container-light">
+                      <div className="bar-chart-fill highlight" style={{ width: '33.2%', backgroundColor: 'var(--color-spring-meadow)' }}></div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex-center" style={{ justifyContent: 'space-between', marginBottom: '4px', fontSize: '0.875rem' }}>
+                      <span>MLP Neural Network</span>
+                      <span>31.7%</span>
+                    </div>
+                    <div className="bar-chart-container bar-chart-container-light">
+                      <div className="bar-chart-fill" style={{ width: '31.7%', backgroundColor: 'rgba(247, 249, 225, 0.4)' }}></div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex-center" style={{ justifyContent: 'space-between', marginBottom: '4px', fontSize: '0.875rem' }}>
+                      <span>Logistic Regression</span>
+                      <span>20.0%</span>
+                    </div>
+                    <div className="bar-chart-container bar-chart-container-light">
+                      <div className="bar-chart-fill" style={{ width: '20.0%', backgroundColor: 'rgba(247, 249, 225, 0.4)' }}></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
         )}
       </main>
       

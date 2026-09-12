@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, File, UploadFile, HTTPException, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import os
@@ -51,8 +51,8 @@ async def health_check():
     return {"status": "healthy", "model_loaded": True}
 
 @app.post("/predict")
-async def predict_genre(image: UploadFile = File(...)):
-    print(f"Received predict request. File: {image.filename}, Type: {image.content_type}")
+async def predict_genre(image: UploadFile = File(...), k: int = Form(10)):
+    print(f"Received predict request. File: {image.filename}, Type: {image.content_type}, K: {k}")
     if model_instance is None:
         raise HTTPException(status_code=503, detail="Model not loaded")
         
@@ -66,7 +66,7 @@ async def predict_genre(image: UploadFile = File(...)):
         print(f"Read {len(image_bytes)} bytes")
         
         # Run inference
-        results = model_instance.predict(image_bytes)
+        results = model_instance.predict(image_bytes, num_neighbors=k)
         print("Inference successful")
         return JSONResponse(content=results)
         
