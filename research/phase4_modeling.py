@@ -44,7 +44,9 @@ def main():
     
     from sklearn.preprocessing import LabelEncoder
     le = LabelEncoder()
-    y_train = le.fit_transform(y_train_str)
+    # Fit on all genres to prevent unseen label errors
+    le.fit(df['genre'].values)
+    y_train = le.transform(y_train_str)
     y_val = le.transform(y_val_str)
     y_test = le.transform(y_test_str)
     
@@ -84,7 +86,7 @@ def main():
     
     print("\n--- Test Set Evaluation ---")
     test_preds = best_model.predict(X_test_scaled)
-    print(classification_report(y_test, test_preds, target_names=le.classes_))
+    print(classification_report(y_test, test_preds, labels=range(len(le.classes_)), target_names=le.classes_))
     
     # We still use PCA for the NearestNeighbors index to make similarity search fast
     print(f"\nApplying PCA (components={KNN_PCA_COMPONENTS}) for Similarity Search Index...")

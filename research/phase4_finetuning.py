@@ -114,7 +114,7 @@ def main():
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
     
-    best_val_acc = 0.0
+    best_val_acc = -1.0
     
     print("\n--- Starting Training ---")
     for epoch in range(EPOCHS):
@@ -176,7 +176,7 @@ def main():
             all_preds.extend(predicted.cpu().numpy())
             all_labels.extend(labels.cpu().numpy())
             
-    print(classification_report(all_labels, all_preds, target_names=le.classes_))
+    print(classification_report(all_labels, all_preds, labels=range(len(le.classes_)), target_names=le.classes_))
     
     # Feature Re-extraction for KNN
     print("\n--- Re-extracting Features for Similarity Search ---")

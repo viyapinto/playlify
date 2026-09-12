@@ -52,21 +52,26 @@ async def health_check():
 
 @app.post("/predict")
 async def predict_genre(image: UploadFile = File(...)):
+    print(f"Received predict request. File: {image.filename}, Type: {image.content_type}")
     if model_instance is None:
         raise HTTPException(status_code=503, detail="Model not loaded")
         
     if image.content_type and not image.content_type.startswith("image/"):
+        print(f"Rejected: Invalid content type {image.content_type}")
         raise HTTPException(status_code=400, detail="File must be an image")
         
     try:
         # Read the image bytes
         image_bytes = await image.read()
+        print(f"Read {len(image_bytes)} bytes")
         
         # Run inference
         results = model_instance.predict(image_bytes)
+        print("Inference successful")
         return JSONResponse(content=results)
         
     except ValueError as e:
+        print(f"ValueError during prediction: {e}")
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         print(f"Prediction error: {e}")
