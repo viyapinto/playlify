@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Upload, Music, BarChart2, Library, ChevronRight, Check } from 'lucide-react';
 import './index.css';
 
@@ -12,12 +12,12 @@ const PROCESSING_STEPS = [
 ];
 
 function App() {
-  const [file, setFile] = useState<File | null>(null);
+  const [, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingStep, setProcessingStep] = useState(-1);
   const [predictionResult, setPredictionResult] = useState<any>(null);
-  const [kValue, setKValue] = useState(10);
+  const [kValue] = useState(10);
   const [showResearch, setShowResearch] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

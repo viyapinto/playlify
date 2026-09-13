@@ -1,71 +1,45 @@
-# Playlify Deployment Guide
+# Deploying Playlify (Vercel + Render)
 
-This document outlines the hosting strategy, deployment procedures, and environment configuration for the **Playlify** interactive ML application.
+Due to the size limitations of Vercel Serverless Functions (AWS Lambda) which cannot bundle the massive PyTorch library along with the model artifacts within its 250MB strict limit, Playlify uses a **split deployment model**:
+- **Frontend**: Vercel (Fast, global CDN, perfect for React/Vite)
+- **Backend**: Render (Full containerised Python environment, capable of running PyTorch and handling larger models without restrictive timeouts)
 
-## 1. Hosting Strategy
+## Step 1: Deploy Backend to Render
 
-Playlify uses a separated frontend/backend architecture:
-- **Frontend**: A React + Vite Single Page Application (SPA), deployed as a static site.
-- **Backend**: A FastAPI Python service, deployed as a public web service exposing a prediction REST API.
-- **Data/Models**: The backend holds only the necessary inference artifacts (`scaler.joblib`, `knn_model.joblib`, etc.). Heavy training datasets and images are strictly offline research resources and are **not** deployed.
+1. Create a free account on [Render](https://render.com).
+2. Connect your GitHub account and click **New+** -> **Blueprint**.
+3. Select this `playlify` repository.
+4. Render will automatically detect the `render.yaml` file in the root directory and propose deploying the `playlify-backend` Web Service.
+5. Click **Apply**.
+6. Wait for the deployment to finish (it will take a few minutes to install PyTorch).
+7. Copy the URL of your deployed backend (e.g., `https://playlify-backend.onrender.com`).
 
-## 2. Environment Variables
+*Note: Render's free tier spins down after 15 minutes of inactivity. The first request after a period of inactivity may take up to a minute to wake up the server.*
 
-The React frontend communicates with the FastAPI backend via HTTP. Do not hardcode localhost URLs in the frontend code.
+## Step 2: Deploy Frontend to Vercel
 
-Create a `.env` file in the `frontend/` directory:
+1. Create a free account on [Vercel](https://vercel.com).
+2. Connect your GitHub account and click **Add New** -> **Project**.
+3. Select this `playlify` repository.
+4. Vercel should automatically detect it as a **Vite** project.
+5. In the **Environment Variables** section, add:
+   - **Name**: `VITE_API_URL`
+   - **Value**: The Render URL you copied in Step 1 (e.g., `https://playlify-backend.onrender.com`)
+6. **Root Directory**: `frontend`
+7. Click **Deploy**.
+8. Copy your new Vercel URL (e.g., `https://playlify.vercel.app`).
 
-### Local Development
-```env
-VITE_API_URL=http://localhost:8000
-```
+## Step 3: Secure CORS on Render (Optional but Recommended)
 
-### Production Deployment
-```env
-VITE_API_URL=https://<your-deployed-fastapi-url>
-```
+Now that you have your Vercel URL, you should restrict your backend to only accept requests from your frontend.
 
-## 3. Local Development
+1. Go to your Render Dashboard -> **playlify-backend**.
+2. Click **Environment**.
+3. Add a new Environment Variable:
+   - **Key**: `FRONTEND_URL`
+   - **Value**: Your Vercel URL (e.g., `https://playlify.vercel.app`)
+4. Save changes (this will trigger a new backend deployment).
 
-### Backend Startup
-```bash
-cd backend
-pip install -r requirements.txt
-uvicorn main:app --reload
-```
+## Testing Locally
 
-### Frontend Build & Run
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-## 4. Production Deployment
-
-### Backend (FastAPI)
-1. Ensure `requirements.txt` is updated.
-2. Ensure the pre-trained `models/` and necessary `data/` artifacts are present in the `backend/` folder.
-3. Deploy the service to a hosting provider that supports Python web services (e.g., Render, Railway, Heroku).
-4. **CORS Configuration**: The FastAPI backend is configured to accept requests from the local frontend during development. For production, ensure the backend's CORS settings allow requests from your deployed frontend's origin URL.
-
-### Frontend (React/Vite)
-1. Ensure the `VITE_API_URL` environment variable is set to the production backend URL.
-2. Build the static site:
-   ```bash
-   cd frontend
-   npm run build
-   ```
-3. Deploy the resulting `dist/` directory to a static hosting provider (e.g., Vercel, Netlify, GitHub Pages).
-
-## 5. API Verification
-To verify the production API is alive and reachable, navigate to the health check endpoint:
-`GET https://<your-deployed-fastapi-url>/health`
-
-## 6. Updating the Application
-- **ML Updates**: Run the offline research scripts to generate new model artifacts. Copy the updated artifacts to `backend/models/`. Redeploy the backend.
-- **UI Updates**: Make changes in `frontend/`. Run `npm run build` and redeploy the frontend static files.
-
-## 7. Limitations
-- Uploaded album covers are stored temporarily in memory or a temp directory on the backend for inference, and are deleted immediately after the prediction is returned. 
-- The live endpoint cannot retrain models or process the raw MSD-I dataset.
+If you are developing locally, simply run the frontend and backend as usual. The frontend will fallback to `http://127.0.0.1:8000` if `VITE_API_URL` is not set, and the backend will default `FRONTEND_URL` to `http://localhost:5173`.

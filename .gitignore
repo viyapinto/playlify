@@ -5,3 +5,9 @@ data/
 *.npy
 __pycache__/
 download_error_log.txt
+.env
+.venv/
+venv/
+env/
+node_modules/
+.DS_Store

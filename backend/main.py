@@ -16,9 +16,13 @@ app = FastAPI(
 )
 
 # Enable CORS for the frontend
+frontend_url = os.environ.get("FRONTEND_URL", "http://localhost:5173")
+# In production on Render, frontend_url should be the Vercel app URL (e.g., https://playlify.vercel.app)
+# If FRONTEND_URL is set to "*", it allows all origins.
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # For production, restrict this to the frontend URL
+    allow_origins=[frontend_url] if frontend_url != "*" else ["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -79,4 +83,5 @@ async def predict_genre(image: UploadFile = File(...), k: int = Form(10)):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=False if os.environ.get("RENDER") else True)
