@@ -146,8 +146,9 @@ function App() {
         {(isProcessing || (previewUrl && !predictionResult)) && (
           <div className="animate-fade-in flex-center flex-col gap-lg" style={{ marginBottom: 'var(--spacing-xl)' }}>
              <div style={{ 
-                width: '300px', 
-                height: '300px', 
+                width: '100%', 
+                maxWidth: '300px',
+                aspectRatio: '1/1', 
                 backgroundColor: 'var(--color-morning-mist)', 
                 borderRadius: 'var(--radius-md)', 
                 display: 'flex', 
@@ -226,7 +227,7 @@ function App() {
 
               {/* Methodology / Uploaded Image View */}
               <div className="panel-secondary flex-col gap-lg" style={{ justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
-                 <div style={{ width: '250px', height: '250px', backgroundColor: 'var(--color-morning-mist)', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-subtle)', overflow: 'hidden' }}>
+                 <div style={{ width: '100%', maxWidth: '250px', aspectRatio: '1/1', backgroundColor: 'var(--color-morning-mist)', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-subtle)', overflow: 'hidden' }}>
                     {previewUrl ? (
                       <img src={previewUrl} alt="Analyzed artwork" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (

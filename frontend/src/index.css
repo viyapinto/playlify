@@ -173,11 +173,36 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @media (max-width: 768px) {
+  :root {
+    --spacing-xxl: 32px;
+    --spacing-xl: 24px;
+    --spacing-lg: 16px;
+    --spacing-md: 12px;
+  }
   .grid-2 {
     grid-template-columns: 1fr;
+    gap: var(--spacing-xl);
   }
   .text-display {
-    font-size: 2.5rem;
+    font-size: 2rem;
+  }
+  .text-h2 {
+    font-size: 1.5rem;
+  }
+  .text-h3 {
+    font-size: 1.2rem;
+  }
+  .text-body-large {
+    font-size: 1rem;
+  }
+  .section {
+    padding: var(--spacing-lg) 0;
+  }
+  .panel-dark, .panel-secondary {
+    padding: var(--spacing-lg);
+  }
+  .upload-zone {
+    padding: var(--spacing-lg);
   }
 }
 
