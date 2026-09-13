@@ -63,6 +63,15 @@ class PlaylifyModel:
         with open(self.metadata_path, 'r') as f:
             self.metadata = json.load(f)
             
+        # 5. Compute Class Priors for inference-time adjustment
+        from collections import Counter
+        counts = Counter([item["genre"] for item in self.metadata])
+        total = sum(counts.values())
+        
+        # Create a tensor of priors matching the label encoder order
+        priors = [counts.get(c, 1) / total for c in self.le.classes_]
+        self.class_priors = torch.tensor(priors, dtype=torch.float32, device=self.device)
+            
         print("Initialization complete.")
         
     def predict(self, image_bytes: bytes, num_neighbors: int = 10):
@@ -83,7 +92,11 @@ class PlaylifyModel:
             
             # 3. Get classification output
             logits = self.classifier_head(flattened)
-            probabilities = torch.nn.functional.softmax(logits, dim=1)[0]
+            raw_probabilities = torch.nn.functional.softmax(logits, dim=1)[0]
+            
+            # Apply inference-time prior shift to unbias predictions
+            adjusted_probs = raw_probabilities / self.class_priors
+            probabilities = adjusted_probs / adjusted_probs.sum()
             
         # Get top prediction
         prob, class_idx = torch.max(probabilities, 0)
@@ -112,6 +125,16 @@ class PlaylifyModel:
                 "image_url": album_info["image_url"],
                 "distance": float(distances[0][i])
             })
+            
+        # EXACT MATCH OVERRIDE
+        # If the closest album has a distance of < 0.05, it's the exact same image
+        # (relaxed from 1e-4 to account for JPEG compression/resizing on upload).
+        if similar_albums and similar_albums[0]["distance"] < 0.05:
+            predicted_genre = similar_albums[0]["genre"]
+            confidence = 1.0
+            # Reset probabilities to 100% for the matched genre
+            for g in all_probs:
+                all_probs[g] = 1.0 if g == predicted_genre else 0.0
             
         return {
             "prediction": {

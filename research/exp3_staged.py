@@ -98,19 +98,7 @@ def main():
     test_dataset = AlbumDataset(test_df, transform=val_test_transform)
     full_dataset = AlbumDataset(df, transform=val_test_transform)
 
-    # Calculate class weights for WeightedRandomSampler
-    class_counts = train_df['encoded_genre'].value_counts().sort_index().values
-    class_weights = 1.0 / class_counts
-    train_labels = train_df['encoded_genre'].values
-    sample_weights = [class_weights[label] for label in train_labels]
-    
-    sampler = torch.utils.data.WeightedRandomSampler(
-        weights=sample_weights, 
-        num_samples=len(sample_weights), 
-        replacement=True
-    )
-
-    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, sampler=sampler, num_workers=0)
+    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
     val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=0)
     test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=0)
     full_loader = DataLoader(full_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=0)

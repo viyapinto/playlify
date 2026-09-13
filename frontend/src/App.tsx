@@ -45,7 +45,8 @@ function App() {
       formData.append('image', selectedFile);
       formData.append('k', kValue.toString());
 
-      const response = await fetch('http://localhost:8000/predict', {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${apiUrl}/predict`, {
         method: 'POST',
         body: formData,
       });
@@ -70,7 +71,12 @@ function App() {
       console.error('Error during prediction:', error);
       clearInterval(interval);
       setIsProcessing(false);
-      alert(`Failed to process image: ${error.message}`);
+      
+      if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+        alert(`Failed to connect to the backend server. Please ensure the Python API is running.\n\nDetails: ${error.message}`);
+      } else {
+        alert(`Failed to process image: ${error.message}`);
+      }
     }
   };
 
@@ -253,8 +259,90 @@ function App() {
 
         {/* Visual Story / Research Section */}
         {showResearch && (
-          <section className="section flex-col animate-fade-in" style={{ paddingTop: 'var(--spacing-xl)', borderTop: '1px solid rgba(32, 70, 84, 0.1)', marginTop: 'var(--spacing-lg)' }}>
-            <div style={{ textAlign: 'center', maxWidth: '600px', margin: '0 auto var(--spacing-xl)' }}>
+          <section className="section flex-col animate-fade-in" style={{ 
+            padding: 'var(--spacing-xxl)', 
+            marginTop: 'var(--spacing-xl)',
+            backgroundColor: 'rgba(32, 70, 84, 0.03)',
+            borderRadius: 'var(--radius-xl)',
+            border: '1px solid rgba(32, 70, 84, 0.1)'
+          }}>
+            {/* Playlify Intro (Playlify Native Style) */}
+            <div className="flex-col gap-lg" style={{ maxWidth: '900px', margin: '0 auto var(--spacing-xxl)', width: '100%', textAlign: 'center' }}>
+              
+              <div style={{ marginBottom: 'var(--spacing-lg)' }}>
+                <h2 className="text-display" style={{ marginBottom: 'var(--spacing-sm)' }}>What is Playlify?</h2>
+                <p className="text-body-large" style={{ opacity: 0.8, maxWidth: '650px', margin: '0 auto' }}>
+                  Playlify is a machine learning research application that explores a simple question: <br/>
+                  <strong style={{ color: 'var(--color-teal-waters)' }}>can an album cover reveal something about the music it represents?</strong>
+                </p>
+              </div>
+
+              <div className="grid-2" style={{ gap: 'var(--spacing-lg)', alignItems: 'stretch' }}>
+                
+                {/* Card 1: How it works */}
+                <div className="card flex-col" style={{ 
+                  textAlign: 'left', 
+                  padding: 'var(--spacing-xxl)', 
+                  backgroundColor: 'var(--color-glacial-sky)',
+                  border: '1px solid var(--color-teal-waters)',
+                  borderRadius: '32px',
+                  boxShadow: 'none'
+                }}>
+                  <h3 className="text-display" style={{ color: 'var(--color-teal-waters)', marginBottom: 'var(--spacing-md)', fontSize: '2rem', lineHeight: 1.2 }}>
+                    How it works
+                  </h3>
+                  <div className="text-body" style={{ opacity: 0.9, lineHeight: 1.6, flexGrow: 1, margin: 0 }}>
+                    <p style={{ margin: 0 }}>
+                      Upload an album cover and Playlify analyses its visual features to predict its <strong>music genre</strong> and find <strong>album covers that look visually similar</strong>. Behind the interface, machine learning techniques transform artwork into numerical visual representations, classify the artwork, and compare it with other albums in the dataset.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Card 2: What is it trying to find? */}
+                <div className="card flex-col" style={{ 
+                  textAlign: 'left', 
+                  padding: 'var(--spacing-xxl)', 
+                  backgroundColor: 'var(--color-spring-meadow)',
+                  border: '1px solid var(--color-teal-waters)',
+                  borderRadius: '32px',
+                  boxShadow: 'none'
+                }}>
+                  <h3 className="text-display" style={{ color: 'var(--color-teal-waters)', marginBottom: 'var(--spacing-md)', fontSize: '2rem', lineHeight: 1.2 }}>
+                    What is Playlify trying to find?
+                  </h3>
+                  <div className="text-body" style={{ opacity: 0.9, lineHeight: 1.6, flexGrow: 1, margin: 0 }}>
+                    <p style={{ margin: '0 0 var(--spacing-sm) 0' }}>
+                      The goal is not to prove that a particular visual style <em>is</em> a genre. Instead, Playlify investigates <strong>how much information about music genre can actually be found in album artwork alone</strong>.
+                    </p>
+                    <p style={{ margin: 0 }}>
+                      With <strong>15 music genres</strong> and thousands of album covers, the project evaluates how well visual information can distinguish between genres and where the model struggles when different genres share similar visual styles.
+                    </p>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Card 3 (Research Question) */}
+              <div className="card flex-col flex-center" style={{ 
+                backgroundColor: 'var(--color-teal-waters)', 
+                color: 'var(--color-morning-mist)',
+                padding: 'var(--spacing-xxl)', 
+                textAlign: 'center',
+                borderRadius: '32px',
+                boxShadow: '0 16px 40px rgba(32, 70, 84, 0.15)',
+                marginTop: 'var(--spacing-xs)'
+              }}>
+                <div className="text-small" style={{ textTransform: 'uppercase', letterSpacing: '2px', opacity: 0.7, marginBottom: 'var(--spacing-md)' }}>
+                  Research Question
+                </div>
+                <blockquote className="text-h3" style={{ margin: 0, fontStyle: 'italic', lineHeight: 1.5, opacity: 0.95, color: 'var(--color-morning-mist)' }}>
+                  "To what extent can album-cover colour and visual features be used to classify music genres and identify visually similar albums?"
+                </blockquote>
+              </div>
+
+            </div>
+
+            <div style={{ textAlign: 'center', maxWidth: '600px', margin: '0 auto var(--spacing-xl)', borderTop: '1px solid rgba(32, 70, 84, 0.1)', paddingTop: 'var(--spacing-xxl)' }}>
               <h2 className="text-display" style={{ marginBottom: 'var(--spacing-sm)' }}>How Playlify Works</h2>
               <p className="text-body-large" style={{ opacity: 0.8 }}>Can an album cover tell us something about its genre? Here is how our model sees it.</p>
             </div>
@@ -356,6 +444,8 @@ function App() {
                 </div>
               </div>
             </div>
+
+
           </section>
         )}
       </main>

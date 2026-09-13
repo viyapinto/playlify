@@ -19,8 +19,8 @@ from tqdm import tqdm
 # Configuration
 LABELS_FILE = 'cleaned_album_dataset.tsv'
 IMAGE_DIR = 'data/images'
-MODELS_DIR = 'models'
-EPOCHS = 5
+MODELS_DIR = 'models_exp1'
+EPOCHS = 2
 BATCH_SIZE = 64
 LEARNING_RATE = 1e-4
 KNN_PCA_COMPONENTS = 128
@@ -81,7 +81,9 @@ def main():
         transforms.Resize(256),
         transforms.RandomCrop(224),
         transforms.RandomHorizontalFlip(),
-        transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0.1),
+        transforms.RandomRotation(15),
+        transforms.RandomAffine(degrees=0, translate=(0.1, 0.1)),
+        transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
@@ -98,19 +100,7 @@ def main():
     test_dataset = AlbumDataset(test_df, transform=val_test_transform)
     full_dataset = AlbumDataset(df, transform=val_test_transform)
 
-    # Calculate class weights for WeightedRandomSampler
-    class_counts = train_df['encoded_genre'].value_counts().sort_index().values
-    class_weights = 1.0 / class_counts
-    train_labels = train_df['encoded_genre'].values
-    sample_weights = [class_weights[label] for label in train_labels]
-    
-    sampler = torch.utils.data.WeightedRandomSampler(
-        weights=sample_weights, 
-        num_samples=len(sample_weights), 
-        replacement=True
-    )
-
-    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, sampler=sampler, num_workers=0)
+    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
     val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=0)
     test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=0)
     full_loader = DataLoader(full_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=0)

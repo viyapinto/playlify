@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Nunito:wght@300;400;500;600;700&display=swap');
 
 :root {
   /* Core Colour Palette */
@@ -9,7 +9,7 @@
 
   /* Typography */
   --font-display: 'DM Serif Display', serif;
-  --font-body: 'Inter', sans-serif;
+  --font-body: 'Nunito', sans-serif;
 
   /* Spacing & Layout */
   --radius-sm: 4px;

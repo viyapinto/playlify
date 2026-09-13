@@ -7,19 +7,21 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler
 from torchvision import models, transforms
 from sklearn.preprocessing import LabelEncoder
 from sklearn.neighbors import NearestNeighbors
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, f1_score
 from sklearn.decomposition import PCA
+import torch.nn.functional as F
+from sklearn.utils.class_weight import compute_class_weight
 from PIL import Image
 from tqdm import tqdm
 
 # Configuration
 LABELS_FILE = 'cleaned_album_dataset.tsv'
 IMAGE_DIR = 'data/images'
-MODELS_DIR = 'models'
+MODELS_DIR = 'models_exp2'
 EPOCHS = 5
 BATCH_SIZE = 64
 LEARNING_RATE = 1e-4
@@ -51,6 +53,29 @@ class AlbumDataset(Dataset):
             
         label = row['encoded_genre']
         return image, label, album_index
+
+class FocalLoss(nn.Module):
+    def __init__(self, alpha=None, gamma=2.0, reduction='mean'):
+        super(FocalLoss, self).__init__()
+        self.alpha = alpha
+        self.gamma = gamma
+        self.reduction = reduction
+
+    def forward(self, inputs, targets):
+        ce_loss = F.cross_entropy(inputs, targets, reduction='none')
+        pt = torch.exp(-ce_loss)
+        focal_loss = ((1 - pt) ** self.gamma) * ce_loss
+        
+        if self.alpha is not None:
+            alpha_t = self.alpha.gather(0, targets.data.view(-1))
+            focal_loss = focal_loss * alpha_t
+            
+        if self.reduction == 'mean':
+            return focal_loss.mean()
+        elif self.reduction == 'sum':
+            return focal_loss.sum()
+        else:
+            return focal_loss
 
 def main():
     print(f"Using device: {device}")
@@ -98,17 +123,11 @@ def main():
     test_dataset = AlbumDataset(test_df, transform=val_test_transform)
     full_dataset = AlbumDataset(df, transform=val_test_transform)
 
-    # Calculate class weights for WeightedRandomSampler
+    # Calculate sample weights for WeightedRandomSampler
     class_counts = train_df['encoded_genre'].value_counts().sort_index().values
-    class_weights = 1.0 / class_counts
-    train_labels = train_df['encoded_genre'].values
-    sample_weights = [class_weights[label] for label in train_labels]
-    
-    sampler = torch.utils.data.WeightedRandomSampler(
-        weights=sample_weights, 
-        num_samples=len(sample_weights), 
-        replacement=True
-    )
+    class_weights_sampler = 1.0 / class_counts
+    sample_weights = [class_weights_sampler[label] for label in train_df['encoded_genre']]
+    sampler = WeightedRandomSampler(weights=sample_weights, num_samples=len(sample_weights), replacement=True)
 
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, sampler=sampler, num_workers=0)
     val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=0)
@@ -123,10 +142,14 @@ def main():
     model.classifier[1] = nn.Linear(in_features, num_classes)
     model = model.to(device)
     
-    criterion = nn.CrossEntropyLoss()
+    # Compute class weights for Focal Loss
+    class_weights = compute_class_weight('balanced', classes=np.unique(train_df['encoded_genre']), y=train_df['encoded_genre'])
+    class_weights = torch.tensor(class_weights, dtype=torch.float32).to(device)
+    
+    criterion = FocalLoss(alpha=class_weights, gamma=2.0)
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
     
-    best_val_acc = -1.0
+    best_val_f1 = -1.0
     
     print("\n--- Starting Training ---")
     for epoch in range(EPOCHS):
@@ -153,21 +176,22 @@ def main():
         
         # Validation
         model.eval()
-        val_correct = 0
-        val_total = 0
+        val_preds = []
+        val_labels = []
         with torch.no_grad():
             for images, labels, _ in tqdm(val_loader, desc=f"Epoch {epoch+1}/{EPOCHS} [Val]"):
                 images, labels = images.to(device), labels.to(device)
                 outputs = model(images)
                 _, predicted = torch.max(outputs.data, 1)
-                val_total += labels.size(0)
-                val_correct += (predicted == labels).sum().item()
+                val_preds.extend(predicted.cpu().numpy())
+                val_labels.extend(labels.cpu().numpy())
                 
-        val_acc = val_correct / val_total
-        print(f"Epoch {epoch+1} - Loss: {running_loss/len(train_loader):.4f} - Train Acc: {train_acc:.4f} - Val Acc: {val_acc:.4f}")
+        val_acc = (np.array(val_preds) == np.array(val_labels)).mean()
+        val_macro_f1 = f1_score(val_labels, val_preds, average='macro')
+        print(f"Epoch {epoch+1} - Loss: {running_loss/len(train_loader):.4f} - Train Acc: {train_acc:.4f} - Val Acc: {val_acc:.4f} - Val Macro F1: {val_macro_f1:.4f}")
         
-        if val_acc > best_val_acc:
-            best_val_acc = val_acc
+        if val_macro_f1 > best_val_f1:
+            best_val_f1 = val_macro_f1
             os.makedirs(MODELS_DIR, exist_ok=True)
             torch.save(model.state_dict(), os.path.join(MODELS_DIR, 'finetuned_model.pth'))
             print("  --> Saved new best model!")
