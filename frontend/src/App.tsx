@@ -19,6 +19,7 @@ function App() {
   const [predictionResult, setPredictionResult] = useState<any>(null);
   const [kValue, setKValue] = useState(10);
   const [showResearch, setShowResearch] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -29,6 +30,7 @@ function App() {
     setPreviewUrl(objectUrl);
     
     setPredictionResult(null);
+    setError(null);
     setIsProcessing(true);
     setProcessingStep(0);
 
@@ -45,15 +47,21 @@ function App() {
       formData.append('image', selectedFile);
       formData.append('k', kValue.toString());
 
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
       const response = await fetch(`${apiUrl}/predict`, {
         method: 'POST',
         body: formData,
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Prediction failed: ${response.status} ${errorText}`);
+        let errorMessage = `Prediction failed: ${response.status}`;
+        try {
+          const errorJson = await response.json();
+          if (errorJson.detail) errorMessage = errorJson.detail;
+        } catch (e) {
+          // Fallback if not valid JSON
+        }
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
@@ -73,9 +81,9 @@ function App() {
       setIsProcessing(false);
       
       if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-        alert(`Failed to connect to the backend server. Please ensure the Python API is running.\n\nDetails: ${error.message}`);
+        setError('Failed to connect to the backend server. Please ensure the Python API is running.');
       } else {
-        alert(`Failed to process image: ${error.message}`);
+        setError(error.message);
       }
     }
   };
@@ -111,6 +119,11 @@ function App() {
         </section>
 
         {/* Upload Area */}
+        {error && (
+          <div className="animate-fade-in" style={{ maxWidth: '600px', margin: '0 auto var(--spacing-lg)', padding: 'var(--spacing-md)', backgroundColor: 'rgba(220, 53, 69, 0.1)', border: '1px solid rgba(220, 53, 69, 0.3)', borderRadius: 'var(--radius-sm)', color: '#d32f2f', textAlign: 'center' }}>
+            <p className="text-body-large" style={{ margin: 0 }}><strong>Oops!</strong> {error}</p>
+          </div>
+        )}
         <section className="flex-center" style={{ marginBottom: 'var(--spacing-xl)' }}>
           <div className="upload-zone" style={{ width: '100%', maxWidth: '600px', position: 'relative' }}>
             <input type="file" accept="image/*" onChange={handleFileUpload} />
@@ -319,7 +332,26 @@ function App() {
                     </p>
                   </div>
                 </div>
+              </div>
 
+              {/* Why can the model get it wrong? */}
+              <div className="card flex-col" style={{ 
+                textAlign: 'left', 
+                padding: 'var(--spacing-xxl)', 
+                backgroundColor: 'var(--color-spring-meadow)',
+                border: '1px solid var(--color-teal-waters)',
+                borderRadius: '32px',
+                boxShadow: 'none',
+                marginTop: 'var(--spacing-xs)'
+              }}>
+                <h3 className="text-display" style={{ color: 'var(--color-teal-waters)', marginBottom: 'var(--spacing-md)', fontSize: '2rem', lineHeight: 1.2 }}>
+                  Why can the model get it wrong?
+                </h3>
+                <div className="text-body" style={{ opacity: 0.9, lineHeight: 1.6, flexGrow: 1, margin: 0 }}>
+                  <p style={{ margin: 0 }}>
+                    Album covers from different genres can share similar colours, compositions, photography, typography, or artistic styles. When a cover doesn't strongly resemble the visual patterns learned from its genre, the model may classify it as another genre. These misclassifications are an important part of the research, showing the limits of using visual information alone.
+                  </p>
+                </div>
               </div>
 
               {/* Card 3 (Research Question) */}
