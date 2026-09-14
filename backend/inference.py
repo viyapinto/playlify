@@ -8,17 +8,12 @@ from torchvision import models, transforms
 from PIL import Image
 import io
 import gc
-import psutil
 
-def get_memory_mb():
-    process = psutil.Process(os.getpid())
-    return process.memory_info().rss / (1024 * 1024)
 
 class PlaylifyModel:
     def __init__(self, models_dir: str):
         self.device = torch.device("cpu") # Force CPU to save memory on Render Free Tier
         print(f"Initializing inference engine on {self.device}...")
-        print(f"[MEMORY] Startup RSS: {get_memory_mb():.2f} MB")
         
         # Paths
         self.model_path = os.path.join(models_dir, 'finetuned_model.pth')
@@ -63,7 +58,6 @@ class PlaylifyModel:
         for param in self.model.parameters():
             param.requires_grad = False
             
-        print(f"[MEMORY] RSS after MobileNetV2: {get_memory_mb():.2f} MB")
         
         # 3. Load PCA and KNN
         print("Loading PCA & extracting KNN array...")
@@ -75,7 +69,6 @@ class PlaylifyModel:
         del knn_obj
         gc.collect()
         
-        print(f"[MEMORY] RSS after PCA/KNN: {get_memory_mb():.2f} MB")
         
         # 4. Load Metadata Lookup
         print("Loading Metadata...")
@@ -101,12 +94,10 @@ class PlaylifyModel:
         del raw_metadata
         gc.collect()
         
-        print(f"[MEMORY] RSS after metadata: {get_memory_mb():.2f} MB")
         print("Initialization complete.")
         
     @torch.inference_mode()
     def predict(self, image_bytes: bytes, num_neighbors: int = 10):
-        print(f"[MEMORY] RSS before prediction: {get_memory_mb():.2f} MB")
         
         try:
             image = Image.open(io.BytesIO(image_bytes)).convert('RGB')
@@ -192,7 +183,6 @@ class PlaylifyModel:
         del img_tensor, features, pooled, flattened, logits, raw_probabilities, probabilities
         gc.collect()
         
-        print(f"[MEMORY] RSS after prediction: {get_memory_mb():.2f} MB")
         
         return {
             "prediction": {
