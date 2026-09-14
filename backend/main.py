@@ -16,13 +16,9 @@ app = FastAPI(
 )
 
 # Enable CORS for the frontend
-frontend_url = os.environ.get("FRONTEND_URL", "http://localhost:5173")
-# In production on Render, frontend_url should be the Vercel app URL (e.g., https://playlify.vercel.app)
-# If FRONTEND_URL is set to "*", it allows all origins.
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[frontend_url] if frontend_url != "*" else ["*"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
