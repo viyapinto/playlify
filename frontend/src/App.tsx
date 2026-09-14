@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Upload, BarChart2, Library, ChevronRight, Check } from 'lucide-react';
+import { Upload, BarChart2, Library, ChevronRight, Check, AlertCircle } from 'lucide-react';
 import ResearchVisualizations from './components/ResearchVisualizations';
 import './index.css';
 
@@ -20,6 +20,7 @@ function App() {
   const [predictionResult, setPredictionResult] = useState<any>(null);
   const [kValue] = useState(10);
   const [error, setError] = useState<string | null>(null);
+  const [isColdStart, setIsColdStart] = useState(false);
 
   const processFile = async (selectedFile: File) => {
     setFile(selectedFile);
@@ -30,6 +31,11 @@ function App() {
     setError(null);
     setIsProcessing(true);
     setProcessingStep(0);
+    setIsColdStart(false);
+
+    const coldStartTimeout = setTimeout(() => {
+      setIsColdStart(true);
+    }, 4000);
 
     let currentStep = 0;
     const interval = setInterval(() => {
@@ -51,6 +57,7 @@ function App() {
       });
 
       if (!response.ok) {
+        clearTimeout(coldStartTimeout);
         let errorMessage = `Prediction failed: ${response.status}`;
         try {
           const errorJson = await response.json();
@@ -64,6 +71,7 @@ function App() {
       const data = await response.json();
       
       setTimeout(() => {
+        clearTimeout(coldStartTimeout);
         clearInterval(interval);
         setProcessingStep(PROCESSING_STEPS.length - 1);
         setTimeout(() => {
@@ -74,6 +82,7 @@ function App() {
 
     } catch (error: any) {
       console.error('Error during prediction:', error);
+      clearTimeout(coldStartTimeout);
       clearInterval(interval);
       setIsProcessing(false);
       
@@ -239,6 +248,15 @@ function App() {
                    </div>
                 )}
              </div>
+
+             {isColdStart && isProcessing && (
+               <div className="animate-fade-in" style={{ width: '100%', maxWidth: '300px', marginTop: 'var(--spacing-sm)', padding: 'var(--spacing-md)', backgroundColor: 'var(--color-glacial-sky)', borderRadius: 'var(--radius-sm)', borderLeft: '4px solid var(--color-teal-waters)' }}>
+                 <p className="text-small" style={{ margin: 0, color: 'var(--color-obsidian-night)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                   <AlertCircle size={16} color="var(--color-teal-waters)" />
+                   <span>Waking up the prediction server. This may take up to 50 seconds.</span>
+                 </p>
+               </div>
+             )}
           </div>
         )}
 
