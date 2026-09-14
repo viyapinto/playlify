@@ -15,10 +15,9 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Enable CORS for the frontend
+# Enable CORS for all frontends (Vercel, Localhost, etc.)
 frontend_url = os.environ.get("FRONTEND_URL", "")
 
-# We want to support local development and the deployed frontend.
 allowed_origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
@@ -32,13 +31,19 @@ if frontend_url and frontend_url != "*":
         if url and url not in allowed_origins:
             allowed_origins.append(url)
 
+# Use allow_origins=["*"] if frontend_url is empty, "*" or not specified, allowing any origin (including Vercel deployments)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"] if frontend_url == "*" else allowed_origins,
+    allow_origins=["*"] if (not frontend_url or frontend_url == "*") else allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/")
+async def root():
+    return {"status": "ok", "message": "Playlify Backend API is live!"}
+
 
 # Global model instance
 model_instance = None
