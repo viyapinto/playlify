@@ -10,3 +10,4 @@ services:
         value: 3.10.12
       - key: FRONTEND_URL
         sync: false
+    healthCheckPath: /health

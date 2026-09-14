@@ -64,7 +64,7 @@ async def startup_event():
 async def health_check():
     if model_instance is None:
         raise HTTPException(status_code=503, detail="Model not loaded")
-    return {"status": "healthy", "model_loaded": True}
+    return {"status": "ok"}
 
 @app.post("/predict")
 async def predict_genre(image: UploadFile = File(...), k: int = Form(10)):
