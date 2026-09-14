@@ -94,7 +94,7 @@ function App() {
       setIsProcessing(false);
       
       if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-        setError('Oops! Failed to connect to the backend server. Please ensure the Python API is running.');
+        setError('Failed to connect to the backend server. Please ensure the Python API is running.');
       } else {
         setError(error.message);
       }
