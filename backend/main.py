@@ -16,9 +16,25 @@ app = FastAPI(
 )
 
 # Enable CORS for the frontend
+frontend_url = os.environ.get("FRONTEND_URL", "")
+
+# We want to support local development and the deployed frontend.
+allowed_origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:4173",
+    "http://localhost:3000",
+]
+
+if frontend_url and frontend_url != "*":
+    for url in frontend_url.split(","):
+        url = url.strip().rstrip("/")
+        if url and url not in allowed_origins:
+            allowed_origins.append(url)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"] if frontend_url == "*" else allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -94,7 +94,7 @@ function App() {
       setIsProcessing(false);
       
       if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-        setError('Failed to connect to the prediction server. It might be waking up from sleep or there is a network issue. Please wait a minute and try again.');
+        setError('Oops! Failed to connect to the backend server. Please ensure the Python API is running.');
       } else {
         setError(error.message);
       }
@@ -104,6 +104,12 @@ function App() {
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (!selectedFile) return;
+    
+    if (!selectedFile.type.startsWith('image/')) {
+      setError("Invalid image file. Please upload a valid image format.");
+      return;
+    }
+    
     await processFile(selectedFile);
   };
 
