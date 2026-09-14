@@ -204,6 +204,14 @@ h1, h2, h3, h4, h5, h6 {
   .upload-zone {
     padding: var(--spacing-lg);
   }
+  .nav {
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--spacing-md);
+  }
+  .nav .flex-center {
+    justify-content: center !important;
+  }
 }
 
 .flex-center {
@@ -227,6 +235,8 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
   padding: var(--spacing-lg) 0;
   border-bottom: 1px solid rgba(32, 70, 84, 0.1);
   width: 100%;

@@ -1,0 +1,212 @@
+{
+  "easy": [
+    {
+      "album_index": 11235,
+      "genre": "Electronic",
+      "pred_genre": "Electronic",
+      "confidence": 0.831591050049127,
+      "image_url": "http://artwork-cdn.7static.com/static/img/sleeveart/00/005/676/0000567631_200.jpg",
+      "msd_artist_id": "AR52ZZB1187FB3B7CA"
+    },
+    {
+      "album_index": 11360,
+      "genre": "Electronic",
+      "pred_genre": "Electronic",
+      "confidence": 0.8161271906643041,
+      "image_url": "http://artwork-cdn.7static.com/static/img/sleeveart/00/005/841/0000584118_200.jpg",
+      "msd_artist_id": "ARA7H7D1187FB48045"
+    },
+    {
+      "album_index": 11536,
+      "genre": "Electronic",
+      "pred_genre": "Electronic",
+      "confidence": 0.8111688695285336,
+      "image_url": "http://artwork-cdn.7static.com/static/img/sleeveart/00/003/058/0000305865_200.jpg",
+      "msd_artist_id": "AR9S8551187FB3EA81"
+    },
+    {
+      "album_index": 12469,
+      "genre": "Metal",
+      "pred_genre": "Metal",
+      "confidence": 0.8358161031298467,
+      "image_url": "http://artwork-cdn.7static.com/static/img/sleeveart/00/028/961/0002896179_200.jpg",
+      "msd_artist_id": "ARE2G8K1187FB53219"
+    },
+    {
+      "album_index": 14787,
+      "genre": "Metal",
+      "pred_genre": "Metal",
+      "confidence": 0.8438896462933138,
+      "image_url": "http://artwork-cdn.7static.com/static/img/sleeveart/00/006/621/0000662192_200.jpg",
+      "msd_artist_id": "ARA7L391187B9A2C53"
+    }
+  ],
+  "distinctive": [
+    {
+      "album_index": 12370,
+      "genre": "Electronic",
+      "pred_genre": "Electronic",
+      "confidence": 0.46373638052805494,
+      "image_url": "http://artwork-cdn.7static.com/static/img/sleeveart/00/020/666/0002066696_200.jpg",
+      "msd_artist_id": "AR9S8551187FB3EA81"
+    },
+    {
+      "album_index": 6766,
+      "genre": "Pop",
+      "pred_genre": "Electronic",
+      "confidence": 0.4616689396831816,
+      "image_url": "http://artwork-cdn.7static.com/static/img/sleeveart/00/005/330/0000533059_200.jpg",
+      "msd_artist_id": "AR2RFZP1187FB4B33E"
+    },
+    {
+      "album_index": 16363,
+      "genre": "Pop",
+      "pred_genre": "Pop",
+      "confidence": 0.251095243992511,
+      "image_url": "http://artwork-cdn.7static.com/static/img/sleeveart/00/002/907/0000290794_200.jpg",
+      "msd_artist_id": "ARY0XD81187FB5CF38"
+    },
+    {
+      "album_index": 5881,
+      "genre": "Punk",
+      "pred_genre": "Rock",
+      "confidence": 0.3241330244980196,
+      "image_url": "http://artwork-cdn.7static.com/static/img/sleeveart/00/001/717/0000171752_200.jpg",
+      "msd_artist_id": "ARXANMY1187B9AEFDA"
+    },
+    {
+      "album_index": 2576,
+      "genre": "Rock",
+      "pred_genre": "Electronic",
+      "confidence": 0.3481781378281185,
+      "image_url": "http://artwork-cdn.7static.com/static/img/sleeveart/00/006/282/0000628265_200.jpg",
+      "msd_artist_id": "ARIMZQZ1187B9AD541"
+    }
+  ],
+  "minority": [
+    {
+      "album_index": 10162,
+      "genre": "Punk",
+      "pred_genre": "Metal",
+      "confidence": 0.4084221476632376,
+      "image_url": "http://artwork-cdn.7static.com/static/img/sleeveart/00/006/223/0000622352_200.jpg",
+      "msd_artist_id": "ARTJVIZ1187B98E559"
+    },
+    {
+      "album_index": 1019,
+      "genre": "World",
+      "pred_genre": "Jazz",
+      "confidence": 0.14010044263034407,
+      "image_url": "http://artwork-cdn.7static.com/static/img/sleeveart/00/018/726/0001872632_200.jpg",
+      "msd_artist_id": "ARWJCJW1187FB528E7"
+    },
+    {
+      "album_index": 10299,
+      "genre": "Folk",
+      "pred_genre": "Rock",
+      "confidence": 0.6891697879593357,
+      "image_url": "http://artwork-cdn.7static.com/static/img/sleeveart/00/032/648/0003264856_200.jpg",
+      "msd_artist_id": "AR2XBPG1187B98FCBE"
+    },
+    {
+      "album_index": 1033,
+      "genre": "New Age",
+      "pred_genre": "Metal",
+      "confidence": 0.31799547520941096,
+      "image_url": "http://artwork-cdn.7static.com/static/img/sleeveart/00/017/636/0001763675_200.jpg",
+      "msd_artist_id": "AR1747M1187FB3A3C6"
+    },
+    {
+      "album_index": 10356,
+      "genre": "World",
+      "pred_genre": "Rock",
+      "confidence": 0.35983238179441546,
+      "image_url": "http://artwork-cdn.7static.com/static/img/sleeveart/00/029/763/0002976306_200.jpg",
+      "msd_artist_id": "AR9JEJR1187FB4EDD7"
+    }
+  ],
+  "ambiguous": [
+    {
+      "album_index": 10006,
+      "genre": "Reggae",
+      "pred_genre": "Rock",
+      "confidence": 0.1742179596785914,
+      "image_url": "http://artwork-cdn.7static.com/static/img/sleeveart/00/002/019/0000201929_200.jpg",
+      "msd_artist_id": "ARTYXQC1187B9ACAB2"
+    },
+    {
+      "album_index": 1019,
+      "genre": "World",
+      "pred_genre": "Jazz",
+      "confidence": 0.14010044263034407,
+      "image_url": "http://artwork-cdn.7static.com/static/img/sleeveart/00/018/726/0001872632_200.jpg",
+      "msd_artist_id": "ARWJCJW1187FB528E7"
+    },
+    {
+      "album_index": 10203,
+      "genre": "RnB",
+      "pred_genre": "Pop",
+      "confidence": 0.17010500094029887,
+      "image_url": "http://artwork-cdn.7static.com/static/img/sleeveart/00/000/121/0000012121_200.jpg",
+      "msd_artist_id": "AR8LMZM1187B9A8160"
+    },
+    {
+      "album_index": 10623,
+      "genre": "Pop",
+      "pred_genre": "Pop",
+      "confidence": 0.19890138907655092,
+      "image_url": "http://artwork-cdn.7static.com/static/img/sleeveart/00/003/933/0000393341_200.jpg",
+      "msd_artist_id": "AR7K8671187FB49531"
+    },
+    {
+      "album_index": 10775,
+      "genre": "RnB",
+      "pred_genre": "Rap",
+      "confidence": 0.18707069674799515,
+      "image_url": "http://artwork-cdn.7static.com/static/img/sleeveart/00/000/417/0000041775_200.jpg",
+      "msd_artist_id": "AR8DX911187FB3C2EF"
+    }
+  ],
+  "confusion": [
+    {
+      "album_index": 10971,
+      "genre": "Rap",
+      "pred_genre": "Electronic",
+      "confidence": 0.881771551982938,
+      "image_url": "http://artwork-cdn.7static.com/static/img/sleeveart/00/007/881/0000788179_200.jpg",
+      "msd_artist_id": "ARCYIHW11E2835CC63"
+    },
+    {
+      "album_index": 11653,
+      "genre": "RnB",
+      "pred_genre": "Electronic",
+      "confidence": 0.7554331570475364,
+      "image_url": "http://artwork-cdn.7static.com/static/img/sleeveart/00/002/007/0000200748_200.jpg",
+      "msd_artist_id": "ARNADXL1187FB47DD8"
+    },
+    {
+      "album_index": 13335,
+      "genre": "Rap",
+      "pred_genre": "Rock",
+      "confidence": 0.7512179721542034,
+      "image_url": "http://artwork-cdn.7static.com/static/img/sleeveart/00/006/142/0000614267_200.jpg",
+      "msd_artist_id": "ARXGASQ1187FB3C727"
+    },
+    {
+      "album_index": 1363,
+      "genre": "Rock",
+      "pred_genre": "Metal",
+      "confidence": 0.8279609274028712,
+      "image_url": "http://artwork-cdn.7static.com/static/img/sleeveart/00/006/945/0000694555_200.jpg",
+      "msd_artist_id": "AR536MD1187B9B9264"
+    },
+    {
+      "album_index": 13868,
+      "genre": "Country",
+      "pred_genre": "Electronic",
+      "confidence": 0.7055169756472215,
+      "image_url": "http://artwork-cdn.7static.com/static/img/sleeveart/00/000/258/0000025885_200.jpg",
+      "msd_artist_id": "ART18T21187B98D04F"
+    }
+  ]
+}

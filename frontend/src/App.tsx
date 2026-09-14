@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Upload, Music, BarChart2, Library, ChevronRight, Check } from 'lucide-react';
+import { Upload, BarChart2, Library, ChevronRight, Check } from 'lucide-react';
+import ResearchVisualizations from './components/ResearchVisualizations';
 import './index.css';
 
 const PROCESSING_STEPS = [
@@ -18,13 +19,9 @@ function App() {
   const [processingStep, setProcessingStep] = useState(-1);
   const [predictionResult, setPredictionResult] = useState<any>(null);
   const [kValue] = useState(10);
-  const [showResearch, setShowResearch] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files?.[0];
-    if (!selectedFile) return;
-
+  const processFile = async (selectedFile: File) => {
     setFile(selectedFile);
     const objectUrl = URL.createObjectURL(selectedFile);
     setPreviewUrl(objectUrl);
@@ -88,22 +85,49 @@ function App() {
     }
   };
 
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0];
+    if (!selectedFile) return;
+    await processFile(selectedFile);
+  };
+
+  const handleExampleClick = async (filename: string) => {
+    try {
+      const response = await fetch(`/examples/${filename}`);
+      const blob = await response.blob();
+      const file = new File([blob], filename, { type: blob.type });
+      await processFile(file);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (e) {
+      console.error(e);
+      setError("Failed to load example image.");
+    }
+  };
+
   return (
     <div style={{ width: '100%', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Navigation */}
       <header className="container">
         <nav className="nav">
           <a href="/" className="nav-brand flex-center gap-sm">
-            <Music size={24} />
             Playlify
           </a>
-          <button 
-            className="btn btn-secondary" 
-            style={{ padding: '8px 16px', fontSize: '0.875rem' }}
-            onClick={() => setShowResearch(!showResearch)}
-          >
-            {showResearch ? 'Hide Research' : 'About the Research'}
-          </button>
+          <div className="flex-center gap-sm" style={{ flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+            <button 
+              className="btn btn-secondary" 
+              style={{ padding: '8px 16px', fontSize: '0.875rem' }}
+              onClick={() => document.getElementById('about-research')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              About the Research
+            </button>
+            <button 
+              className="btn btn-secondary" 
+              style={{ padding: '8px 16px', fontSize: '0.875rem' }}
+              onClick={() => document.getElementById('model-reveals')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              What the Model Reveals
+            </button>
+          </div>
         </nav>
       </header>
 
@@ -124,7 +148,7 @@ function App() {
             <p className="text-body-large" style={{ margin: 0 }}><strong>Oops!</strong> {error}</p>
           </div>
         )}
-        <section className="flex-center" style={{ marginBottom: 'var(--spacing-xl)' }}>
+        <section className="flex-col flex-center" style={{ marginBottom: 'var(--spacing-xl)' }}>
           <div className="upload-zone" style={{ width: '100%', maxWidth: '600px', position: 'relative' }}>
             <input type="file" accept="image/*" onChange={handleFileUpload} />
             <Upload size={48} color="var(--color-teal-waters)" />
@@ -139,6 +163,40 @@ function App() {
             </div>
             
 
+          </div>
+          
+          {/* Try an Example */}
+          <div style={{ marginTop: 'var(--spacing-xl)', textAlign: 'center', width: '100%' }}>
+            <p className="text-small" style={{ opacity: 0.6, marginBottom: 'var(--spacing-md)' }}>Don't have an image? Try an example:</p>
+            <div className="flex-center gap-md" style={{ flexWrap: 'wrap' }}>
+              {[
+                { file: 'example_3.jpg', type: 'Custom', label: 'Example 3' },
+                { file: 'example_1.jpg', type: 'Custom', label: 'Example 1' },
+                { file: 'example_2.jpg', type: 'Custom', label: 'Example 2' },
+                { file: 'example_4.jpg', type: 'Custom', label: 'Example 4' },
+                { file: 'example_5.jpg', type: 'Custom', label: 'Example 5' }
+              ].map((ex) => (
+                <div 
+                  key={ex.file}
+                  onClick={() => handleExampleClick(ex.file)}
+                  style={{ 
+                    cursor: 'pointer', 
+                    width: '60px', 
+                    height: '60px',
+                    borderRadius: 'var(--radius-sm)',
+                    overflow: 'hidden',
+                    border: '2px solid transparent',
+                    boxShadow: 'var(--shadow-subtle)',
+                    transition: 'all 0.2s ease',
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.borderColor = 'var(--color-teal-waters)'}
+                  onMouseOut={(e) => e.currentTarget.style.borderColor = 'transparent'}
+                  title={`${ex.type} Example: ${ex.label}`}
+                >
+                  <img src={`/examples/${ex.file}`} alt={ex.label} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -248,10 +306,9 @@ function App() {
                   <h3 className="text-h2" style={{ marginBottom: 0, display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <Library size={28} /> Visual Nearest Neighbors
                   </h3>
-                  <span className="text-body" style={{ color: 'var(--color-teal-waters)', opacity: 0.7 }}>Most of the nearest neighbours belong to {predictionResult.prediction.genre.toUpperCase()}</span>
                 </div>
                 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 'var(--spacing-lg)' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 200px), 1fr))', gap: 'var(--spacing-lg)' }}>
                   {predictionResult.similar_albums.map((album: any, idx: number) => (
                     <div key={idx} className="card" style={{ padding: 'var(--spacing-md)' }}>
                       <div style={{ width: '100%', aspectRatio: '1/1', backgroundColor: 'var(--color-glacial-sky)', borderRadius: 'var(--radius-sm)', marginBottom: 'var(--spacing-md)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
@@ -272,8 +329,7 @@ function App() {
         )}
 
         {/* Visual Story / Research Section */}
-        {showResearch && (
-          <section className="section flex-col animate-fade-in" style={{ 
+          <section id="about-research" className="section flex-col animate-fade-in" style={{ 
             padding: 'var(--spacing-xxl)', 
             marginTop: 'var(--spacing-xl)',
             backgroundColor: 'rgba(32, 70, 84, 0.03)',
@@ -480,7 +536,11 @@ function App() {
 
 
           </section>
-        )}
+        
+        {/* New Visualizations Section */}
+        <div id="model-reveals">
+          <ResearchVisualizations />
+        </div>
       </main>
       
       {/* Footer */}
