@@ -4,17 +4,21 @@ Due to the size limitations of Vercel Serverless Functions (AWS Lambda) which ca
 - **Frontend**: Vercel (Fast, global CDN, perfect for React/Vite)
 - **Backend**: Render (Full containerised Python environment, capable of running PyTorch and handling larger models without restrictive timeouts)
 
-## Step 1: Deploy Backend to Render
+## Step 1: Deploy Backend to Hugging Face Spaces (Recommended Free Option)
 
-1. Create a free account on [Render](https://render.com).
-2. Connect your GitHub account and click **New+** -> **Blueprint**.
-3. Select this `playlify` repository.
-4. Render will automatically detect the `render.yaml` file in the root directory and propose deploying the `playlify-backend` Web Service.
-5. Click **Apply**.
-6. Wait for the deployment to finish (it will take a few minutes to install PyTorch).
-7. Copy the URL of your deployed backend (e.g., `https://playlify-backend.onrender.com`).
+Because Vercel Serverless Functions have a 250MB limit, we can't bundle PyTorch there. Hugging Face Spaces is a great alternative that stays awake for 48 hours instead of 15 minutes.
 
-*Note: Render's free tier spins down after 15 minutes of inactivity. The first request after a period of inactivity may take up to a minute to wake up the server.*
+1. Go to [Hugging Face](https://huggingface.co/) and create an account.
+2. Click **New Space** in the top right.
+3. Enter a Space name (e.g. `playlify-backend`).
+4. Select **Docker** as the Space SDK and choose the "Blank" template.
+5. Under Space hardware, leave the free CPU basic tier selected.
+6. Click **Create Space**.
+7. Connect your GitHub repository to Hugging Face, or push your code directly to the space using Git (instructions are provided on the Space creation page).
+8. Hugging Face will detect the `Dockerfile` at the root of the repository, build the image, and start the FastAPI server.
+9. Click the **"App"** tab in your space. To get your direct API URL, click the three dots (`...`) in the top right of the App window and select **"Embed this Space"**. You will see a "Direct URL" link (it usually looks like `https://username-playlify-backend.hf.space`). Copy this link!
+
+## Step 1 (Alternative): Deploy Backend to Render
 
 ## Step 2: Deploy Frontend to Vercel
 
