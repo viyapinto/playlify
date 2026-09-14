@@ -50,8 +50,14 @@ function App() {
       formData.append('image', selectedFile);
       formData.append('k', kValue.toString());
 
-      const rawApiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
-      const apiUrl = rawApiUrl.replace(/\/$/, '');
+      const isProd = import.meta.env.PROD;
+      const rawApiUrl = import.meta.env.VITE_API_URL;
+
+      if (isProd && !rawApiUrl) {
+        throw new Error("Configuration Error: VITE_API_URL is not set in the deployment environment.");
+      }
+
+      const apiUrl = (rawApiUrl || 'http://127.0.0.1:8000').replace(/\/$/, '');
       const response = await fetch(`${apiUrl}/predict`, {
         method: 'POST',
         body: formData,
@@ -88,7 +94,7 @@ function App() {
       setIsProcessing(false);
       
       if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-        setError('Failed to connect to the backend server. Please ensure the Python API is running.');
+        setError('Failed to connect to the prediction server. It might be waking up from sleep or there is a network issue. Please wait a minute and try again.');
       } else {
         setError(error.message);
       }
