@@ -31,11 +31,11 @@ if frontend_url and frontend_url != "*":
         if url and url not in allowed_origins:
             allowed_origins.append(url)
 
-# Use allow_origins=["*"] if frontend_url is empty, "*" or not specified, allowing any origin (including Vercel deployments)
+is_wildcard = not frontend_url or frontend_url == "*"
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"] if (not frontend_url or frontend_url == "*") else allowed_origins,
-    allow_credentials=True,
+    allow_origins=["*"] if is_wildcard else allowed_origins,
+    allow_credentials=not is_wildcard,
     allow_methods=["*"],
     allow_headers=["*"],
 )
