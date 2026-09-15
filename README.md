@@ -9,32 +9,6 @@ This project explores deep feature extraction, clustering, and classification te
 
 ---
 
-## Dataset & Citation
-
-The dataset used for **Playlify** is **MSD-I (Million Song Dataset with Images for Multimodal Genre Classification)** created by Sergio Oramas and collaborators.
-
-- **Official Dataset Page**: [MSD-I Dataset — Zenodo](https://zenodo.org/records/1240485)
-- **Dataset Content**: 30,713 tracks, 16,753 albums, and 15 genre classes, with album-cover image URLs and associated metadata.
-- **Dataset DOI**: [10.5281/zenodo.1240485](https://doi.org/10.5281/zenodo.1240485)
-
-### Reference Citation
-
-> Oramas, S., Barbieri, F., Nieto, O., & Serra, X. (2018). Multimodal Deep Learning for Music Genre Classification. *Transactions of the International Society for Music Information Retrieval*, 1(1). DOI: [10.5334/tismir.10](https://doi.org/10.5334/tismir.10)
-
-```bibtex
-@article{oramas2018multimodal,
-  title={Multimodal Deep Learning for Music Genre Classification},
-  author={Oramas, Sergio and Barbieri, Francesco and Nieto, Oriol and Serra, Xavier},
-  journal={Transactions of the International Society for Music Information Retrieval},
-  volume={1},
-  number={1},
-  year={2018},
-  doi={10.5334/tismir.10}
-}
-```
-
----
-
 ## Key Features & Interactive Application
 
 - **Genre Prediction**: Upload any album cover artwork to predict its musical genre using a fine-tuned MobileNetV2 neural network.
@@ -121,3 +95,9 @@ The dataset used for **Playlify** is **MSD-I (Million Song Dataset with Images f
 
 ## Deployment
 For detailed deployment instructions for both frontend and backend environments, please refer to [DEPLOYMENT.md](./DEPLOYMENT.md).
+
+---
+
+## Reference Citation
+
+> Oramas, S., Barbieri, F., Nieto, O., & Serra, X. (2018). Multimodal Deep Learning for Music Genre Classification. *Transactions of the International Society for Music Information Retrieval*, 1(1). DOI: [10.5334/tismir.10](https://doi.org/10.5334/tismir.10)
