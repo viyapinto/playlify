@@ -1,0 +1,7 @@
+{
+  "name": "playlify-monorepo",
+  "private": true,
+  "scripts": {
+    "build": "npm --prefix frontend run build"
+  }
+}
