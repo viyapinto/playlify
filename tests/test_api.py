@@ -3,8 +3,12 @@ import os
 import io
 from PIL import Image
 
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 API_URL = "http://localhost:8000/predict"
-IMAGE_PATH = "c:\\Users\\wiyap\\Desktop\\playlify\\data\\images\\0.jpg"
+
+primary_path = os.path.join(ROOT_DIR, "data", "images", "0.jpg")
+fallback_path = os.path.join(ROOT_DIR, "frontend", "public", "examples", "example_1.jpg")
+IMAGE_PATH = primary_path if os.path.exists(primary_path) else fallback_path
 
 def run_tests():
     print("--- Starting API Tests ---")

@@ -5,19 +5,20 @@ import pandas as pd
 import numpy as np
 
 # Config
-FRONTEND_DATA_DIR = '../frontend/public/data'
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FRONTEND_DATA_DIR = os.path.join(ROOT_DIR, 'frontend', 'public', 'data')
 os.makedirs(FRONTEND_DATA_DIR, exist_ok=True)
 
 print("Loading dataset and features...")
-df_features = pd.read_parquet('../data/extracted_features.parquet')
-df_meta = pd.read_csv('../final_album_dataset.tsv', sep='\t')
+df_features = pd.read_parquet(os.path.join(ROOT_DIR, 'data', 'extracted_features.parquet'))
+df_meta = pd.read_csv(os.path.join(ROOT_DIR, 'research', 'data', 'final_album_dataset.tsv'), sep='\t')
 
 # Ensure album_index alignment
 df = pd.merge(df_meta, df_features, on='album_index')
 
 print("1. Generating PCA data...")
 # Load PCA
-pca = joblib.load('../models/pca.pkl')
+pca = joblib.load(os.path.join(ROOT_DIR, 'models', 'pca.pkl'))
 # MobileNet features
 mobilenet_cols = [f'mobilenet_{i}' for i in range(1280)]
 X = df[mobilenet_cols].values
@@ -86,11 +87,11 @@ print("Saved genre_profiles.json")
 
 print("3. Generating Confusion Matrix...")
 # Extract directly from baseline_results.json
-with open('results/baseline_results.json', 'r') as f:
+with open(os.path.join(ROOT_DIR, 'research', 'results', 'baseline_results.json'), 'r') as f:
     baseline = json.load(f)
 
 # Genres in order
-le = joblib.load('../models/le.pkl')
+le = joblib.load(os.path.join(ROOT_DIR, 'models', 'le.pkl'))
 genres = list(le.classes_)
 
 matrix_data = {

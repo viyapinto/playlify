@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Configuration
-DATASET_FILE = 'final_album_dataset.tsv'
+DATASET_FILE = os.path.join(os.path.dirname(__file__), 'data', 'final_album_dataset.tsv')
 FEATURES_FILE = 'data/extracted_features.parquet'
 OUTPUT_DIR = 'research/eda_output'
 

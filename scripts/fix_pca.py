@@ -9,8 +9,9 @@ from sklearn.neighbors import NearestNeighbors
 from PIL import Image
 import numpy as np
 
-MODELS_DIR = '../models'
-IMAGE_DIR = '../data/images'
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MODELS_DIR = os.path.join(ROOT_DIR, 'models')
+IMAGE_DIR = os.path.join(ROOT_DIR, 'data', 'images')
 KNN_PCA_COMPONENTS = 128
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

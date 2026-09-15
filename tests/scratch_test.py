@@ -1,16 +1,23 @@
+import os
+import sys
 import torch
 import pandas as pd
 from PIL import Image
-from backend.inference import PlaylifyModel
-import os
 
-model = PlaylifyModel('models')
-df = pd.read_csv('cleaned_album_dataset.tsv', sep='\t')
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+
+from backend.inference import PlaylifyModel
+
+model = PlaylifyModel(os.path.join(ROOT_DIR, 'models'))
+tsv_path = os.path.join(ROOT_DIR, 'research', 'data', 'cleaned_album_dataset.tsv')
+df = pd.read_csv(tsv_path, sep='\t')
 latin_df = df[df['genre'] == 'Latin']
 
 preds = []
 for idx in latin_df['album_index']:
-    img_path = f'data/images/{idx}.jpg'
+    img_path = os.path.join(ROOT_DIR, 'data', 'images', f'{idx}.jpg')
     if not os.path.exists(img_path):
         continue
     img = Image.open(img_path).convert('RGB')

@@ -17,7 +17,7 @@ from PIL import Image
 from tqdm import tqdm
 
 # Configuration
-LABELS_FILE = 'cleaned_album_dataset.tsv'
+LABELS_FILE = os.path.join(os.path.dirname(__file__), 'data', 'cleaned_album_dataset.tsv')
 IMAGE_DIR = 'data/images'
 MODELS_DIR = 'models'
 EPOCHS = 5

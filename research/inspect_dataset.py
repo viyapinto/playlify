@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 
 def analyze_conflicts(file_path):
@@ -34,5 +35,5 @@ def analyze_conflicts(file_path):
             print(df[df['album_index'] == idx][['msd_track_id', 'genre', 'image_url']])
 
 if __name__ == "__main__":
-    file_path = "1240485/MSD-I_dataset.tsv"
+    file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', '1240485', 'MSD-I_dataset.tsv')
     analyze_conflicts(file_path)

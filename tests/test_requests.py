@@ -1,8 +1,12 @@
+import os
 import requests, time
+
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+example_img_path = os.path.join(ROOT_DIR, 'frontend', 'public', 'examples', 'example_1.jpg')
 
 url = 'http://localhost:8000/predict'
 try:
-    with open('frontend/public/examples/example_1.jpg', 'rb') as f:
+    with open(example_img_path, 'rb') as f:
         img_data = f.read()
 except:
     print('Cannot find example image, exiting')

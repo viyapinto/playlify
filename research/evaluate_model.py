@@ -11,7 +11,7 @@ from sklearn.metrics import classification_report, confusion_matrix
 from PIL import Image
 from tqdm import tqdm
 
-LABELS_FILE = 'cleaned_album_dataset.tsv'
+LABELS_FILE = os.path.join(os.path.dirname(__file__), 'data', 'cleaned_album_dataset.tsv')
 IMAGE_DIR = 'data/images'
 MODELS_DIR = 'models'
 BATCH_SIZE = 64

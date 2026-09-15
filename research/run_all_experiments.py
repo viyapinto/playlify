@@ -15,7 +15,7 @@ from sklearn.utils.class_weight import compute_class_weight
 from PIL import Image
 from tqdm import tqdm
 
-LABELS_FILE = 'cleaned_album_dataset.tsv'
+LABELS_FILE = os.path.join(os.path.dirname(__file__), 'data', 'cleaned_album_dataset.tsv')
 IMAGE_DIR = 'data/images'
 RESULTS_DIR = 'research/results'
 EPOCHS = 1  # 1 epoch for rapid experimentation to get directional signal

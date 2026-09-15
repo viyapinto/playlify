@@ -123,8 +123,8 @@ def run_downloader(input_file, output_file, stats_file, log_file, img_dir):
     print(f"Stats saved to {stats_file}")
 
 if __name__ == "__main__":
-    input_file = "cleaned_album_dataset.tsv"
-    output_file = "final_album_dataset.tsv"
+    input_file = os.path.join(os.path.dirname(__file__), 'data', 'cleaned_album_dataset.tsv')
+    output_file = os.path.join(os.path.dirname(__file__), 'data', 'final_album_dataset.tsv')
     stats_file = "phase2_download_stats.json"
     log_file = "download_error_log.txt"
     img_dir = "data/images"

@@ -159,7 +159,7 @@ def clean_dataset(input_file, output_file, stats_file):
     print(f"Stats saved to {stats_file}")
 
 if __name__ == "__main__":
-    input_file = "1240485/MSD-I_dataset.tsv"
-    output_file = "cleaned_album_dataset.tsv"
+    input_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', '1240485', 'MSD-I_dataset.tsv')
+    output_file = os.path.join(os.path.dirname(__file__), 'data', 'cleaned_album_dataset.tsv')
     stats_file = "phase2_cleaning_stats.json"
     clean_dataset(input_file, output_file, stats_file)

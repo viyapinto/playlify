@@ -11,7 +11,7 @@ from sklearn.neighbors import NearestNeighbors
 from sklearn.metrics import classification_report, accuracy_score
 
 # Configuration
-LABELS_FILE = 'cleaned_album_dataset.tsv'
+LABELS_FILE = os.path.join(os.path.dirname(__file__), 'data', 'cleaned_album_dataset.tsv')
 FEATURES_FILE = 'data/extracted_features.parquet'
 MODELS_DIR = 'models'
 KNN_PCA_COMPONENTS = 128

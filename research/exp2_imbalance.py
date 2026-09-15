@@ -19,9 +19,9 @@ from PIL import Image
 from tqdm import tqdm
 
 # Configuration
-LABELS_FILE = 'cleaned_album_dataset.tsv'
+LABELS_FILE = os.path.join(os.path.dirname(__file__), 'data', 'cleaned_album_dataset.tsv')
 IMAGE_DIR = 'data/images'
-MODELS_DIR = 'models_exp2'
+MODELS_DIR = os.path.join(os.path.dirname(__file__), 'models_exp2')
 EPOCHS = 5
 BATCH_SIZE = 64
 LEARNING_RATE = 1e-4

@@ -82,7 +82,7 @@ This project explores deep feature extraction, clustering, and classification te
    ```bash
    npm install
    ```
-3. Set your environment variables in `.env` (see [DEPLOYMENT.md](./DEPLOYMENT.md) for details):
+3. Set your environment variables in `.env` (see [DEPLOYMENT.md](./docs/DEPLOYMENT.md) for details):
    ```
    VITE_API_URL=http://localhost:8000
    ```
@@ -94,7 +94,7 @@ This project explores deep feature extraction, clustering, and classification te
 ---
 
 ## Deployment
-For detailed deployment instructions for both frontend and backend environments, please refer to [DEPLOYMENT.md](./DEPLOYMENT.md).
+For detailed deployment instructions for both frontend and backend environments, please refer to [DEPLOYMENT.md](./docs/DEPLOYMENT.md).
 
 ---
 

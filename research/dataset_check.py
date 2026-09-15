@@ -2,7 +2,7 @@ import os
 import pandas as pd
 
 def check_dataset():
-    labels_file = 'cleaned_album_dataset.tsv'
+    labels_file = os.path.join(os.path.dirname(__file__), 'data', 'cleaned_album_dataset.tsv')
     image_dir = 'data/images'
     
     print("--- DATASET INTEGRITY CHECK ---")
