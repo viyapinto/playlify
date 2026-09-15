@@ -45,6 +45,7 @@ function App() {
       }
     }, 600);
 
+    let apiUrl = 'http://127.0.0.1:8000';
     try {
       const formData = new FormData();
       formData.append('image', selectedFile);
@@ -57,53 +58,52 @@ function App() {
         throw new Error("Configuration Error: VITE_API_URL is not set in the deployment environment.");
       }
 
-      let apiUrl = (rawApiUrl || 'http://127.0.0.1:8000').replace(/\/$/, '');
+      apiUrl = (rawApiUrl || 'http://127.0.0.1:8000').replace(/\/$/, '');
       if (apiUrl.includes('onrender.com') && apiUrl.startsWith('http:')) {
         apiUrl = apiUrl.replace('http:', 'https:');
       }
 
-      try {
-        const response = await fetch(`${apiUrl}/predict`, {
-          method: 'POST',
-          body: formData,
-        });
+      const response = await fetch(`${apiUrl}/predict`, {
+        method: 'POST',
+        body: formData,
+      });
 
-        if (!response.ok) {
-          clearTimeout(coldStartTimeout);
-          let errorMessage = `Prediction failed: ${response.status}`;
-          try {
-            const errorJson = await response.json();
-            if (errorJson.detail) errorMessage = errorJson.detail;
-          } catch (e) {
-            // Fallback if not valid JSON
-          }
-          throw new Error(errorMessage);
+      if (!response.ok) {
+        clearTimeout(coldStartTimeout);
+        let errorMessage = `Prediction failed: ${response.status}`;
+        try {
+          const errorJson = await response.json();
+          if (errorJson.detail) errorMessage = errorJson.detail;
+        } catch (e) {
+          // Fallback if not valid JSON
         }
+        throw new Error(errorMessage);
+      }
 
-        const data = await response.json();
-        
-        setTimeout(() => {
-          clearTimeout(coldStartTimeout);
-          clearInterval(interval);
-          setProcessingStep(PROCESSING_STEPS.length - 1);
-          setTimeout(() => {
-            setPredictionResult(data);
-            setIsProcessing(false);
-          }, 800);
-        }, Math.max(0, 2000 - (currentStep * 600))); // Ensure minimum animation time
-
-      } catch (error: any) {
-        console.error('Error during prediction:', error);
+      const data = await response.json();
+      
+      setTimeout(() => {
         clearTimeout(coldStartTimeout);
         clearInterval(interval);
-        setIsProcessing(false);
-        
-        if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-          setError(`Failed to connect to the backend server (${apiUrl}). If using Render free tier, the server may be waking up from sleep — please wait 30 seconds and try uploading again.`);
-        } else {
-          setError(error.message);
-        }
+        setProcessingStep(PROCESSING_STEPS.length - 1);
+        setTimeout(() => {
+          setPredictionResult(data);
+          setIsProcessing(false);
+        }, 800);
+      }, Math.max(0, 2000 - (currentStep * 600))); // Ensure minimum animation time
+
+    } catch (error: any) {
+      console.error('Error during prediction:', error);
+      clearTimeout(coldStartTimeout);
+      clearInterval(interval);
+      setIsProcessing(false);
+      
+      if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+        setError(`Failed to connect to the backend server (${apiUrl}). If using Render free tier, the server may be waking up from sleep — please wait 30 seconds and try uploading again.`);
+      } else {
+        setError(error.message);
       }
+    }
   };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
