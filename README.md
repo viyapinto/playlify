@@ -19,6 +19,21 @@ This project explores deep feature extraction, clustering, and classification te
 
 ---
 
+## Application Interface
+
+| Landing & Upload Interface | About & Research Overview |
+| :---: | :---: |
+| ![Hero Section](./docs/screenshots/hero_section.png) | ![About Playlify](./docs/screenshots/about_section.png) |
+
+| Genre Prediction & Probability Distribution | Nearest Neighbors Visual Similarity |
+| :---: | :---: |
+| ![Genre Prediction](./docs/screenshots/genre_prediction.png) | ![Nearest Neighbors](./docs/screenshots/nearest_neighbors.png) |
+
+### Interactive Feature Space Explorer
+![Visual Feature Space](./docs/screenshots/feature_space.png)
+
+---
+
 ## Research Observations & Key Insights
 
 1. **Visual DNA of Genres**:
