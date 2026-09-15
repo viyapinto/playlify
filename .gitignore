@@ -1,5 +1,6 @@
 1240485/
-data/
+/data/
+!frontend/src/data/
 *.tar.gz
 *.tsv
 *.npy

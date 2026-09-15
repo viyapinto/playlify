@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Info, ZoomIn } from 'lucide-react';
 
-import pcaDataJson from '../../public/data/pca_data.json';
-import profilesJson from '../../public/data/genre_profiles.json';
-import matrixDataJson from '../../public/data/confusion_matrix.json';
+import pcaDataJson from '../data/pca_data.json';
+import profilesJson from '../data/genre_profiles.json';
+import matrixDataJson from '../data/confusion_matrix.json';
 
 interface PCAData {
   id: string;
