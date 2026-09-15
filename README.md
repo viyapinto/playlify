@@ -44,8 +44,5 @@ This project explores feature extraction, clustering, and classification techniq
    npm run dev
    ```
 
-## Live Demo
-Check out the live interactive application at: [https://playlify-two.vercel.app/](https://playlify-two.vercel.app/)
-
 ## Deployment
 For detailed deployment instructions for both frontend and backend environments, please refer to [DEPLOYMENT.md](./DEPLOYMENT.md).
